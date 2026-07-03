@@ -83,5 +83,3 @@ uv run main.py
 - **Dependency injection** — `Router` and each agent receive their dependencies (e.g. `ClaudeClient`) via constructor, never via global imports.
 - **Layered separation of concerns** — `services/` holds external integrations only; `core/` holds routing/orchestration logic with no direct SDK calls; `agents/` holds domain reasoning, independently testable; `tools/` holds pure functions with no routing awareness.
 - **No agent framework dependency** — routing and memory are implemented directly in plain Python/Pydantic rather than via LangChain, LangGraph, or similar.
-
-Full details, the intent → agent mapping, build phases, and testing strategy live in [`CLAUDE.md`](./CLAUDE.md).
