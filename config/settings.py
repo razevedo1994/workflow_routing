@@ -7,3 +7,7 @@ class Settings(BaseSettings):
         env_file_encoding="utf-8",
         extra="allow",
     )
+
+    api_key: str | None = None
+    model: str | None = None
+    max_tokens: int | None = None
