@@ -8,6 +8,6 @@ class Settings(BaseSettings):
         extra="allow",
     )
 
-    api_key: str | None = None
-    model: str | None = None
-    max_tokens: int | None = None
+    api_key: str
+    model: str
+    max_tokens: int
