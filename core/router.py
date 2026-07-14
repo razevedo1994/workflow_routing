@@ -1,3 +1,5 @@
+from typing import Optional
+
 from schemas.router.routing import RoutingDecision
 from services.api.claude_client import ClaudeClient
 
@@ -6,7 +8,7 @@ class Router:
     def __init__(self, claude: ClaudeClient):
         self.claude = claude
 
-    def classify(self, user_input: str) -> RoutingDecision:
+    def classify(self, user_input: str) -> Optional[RoutingDecision]:
         response = self.claude.client.messages.parse(
             model=self.claude.model,
             max_tokens=self.claude.max_tokens,
@@ -15,6 +17,4 @@ class Router:
             output_format=RoutingDecision,
         )
 
-        result = response.parsed_output
-
-        return result
+        return response.parsed_output
