@@ -42,3 +42,35 @@ class WebFetchTool:
 
         except Exception as e:
             return self._error(str(input.url), str(e))
+
+    def _fetch(self, url: str, timeout: int) -> str:
+        response = httpx.get(
+            url, headers=self.HEADERS, timeout=timeout, follow_redirects=True
+        )
+        response.raise_for_status()
+        return response.text
+
+    def _parse(self, html: str) -> tuple[str | None, str]:
+        soup = BeautifulSoup(html, "html.parser")
+
+        for tag in soup(self.NOISE_TAGS):
+            tag.decompose()
+
+        title = soup.title.string.strip() if soup.title else None
+
+        body = soup.find("article") or soup.find("main") or soup.find("body") or soup
+
+        content = " ".join(body.get_text(separator=" ").split())
+
+        return title, content
+
+    @staticmethod
+    def _error(url: str, message: str) -> WebFetchOutput:
+        return WebFetchOutput(
+            url=url,
+            title=None,
+            content="",
+            word_count=0,
+            success=False,
+            error=message,
+        )
