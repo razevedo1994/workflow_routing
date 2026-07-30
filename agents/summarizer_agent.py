@@ -2,8 +2,10 @@ from pathlib import Path
 
 from jinja2 import Environment, FileSystemLoader
 
-from schemas.agents.summarizer_agent import SummarizerInput, SummaryOutput
+from schemas.agents.summarizer_agent import ContentType, SummarizerInput, SummaryOutput
+from schemas.tools.web_fetch import WebFetchInput
 from services.api.claude_client import ClaudeClient
+from tools.web_fetch import WebFetchTool
 
 PROMPT_DIR = Path(__file__).parent.parent / "prompts"
 
@@ -15,11 +17,13 @@ class SummarizerAgent:
     and returns a validated SummaryOutput.
     """
 
-    def __init__(self, claude: ClaudeClient):
+    def __init__(self, claude: ClaudeClient, web_fetch: WebFetchTool):
         self.claude = claude
         self._env = Environment(loader=FileSystemLoader(str(PROMPT_DIR)))
+        self.web_fetch = web_fetch
 
     def run(self, input: SummarizerInput) -> SummaryOutput | None:
+        content = self._resolve_content(input)
         system_prompt = self._render_prompt(input)
 
         response = self.claude.client.messages.parse(
@@ -29,7 +33,7 @@ class SummarizerAgent:
             messages=[
                 {
                     "role": "user",
-                    "content": input.content,
+                    "content": content,
                 }
             ],
             output_format=SummaryOutput,
@@ -44,3 +48,12 @@ class SummarizerAgent:
             focus=input.focus,
             content=input.content[:500],
         )
+
+    def _resolve_content(self, input: SummarizerInput) -> str:
+        if input.content_type == ContentType.URL:
+            fetched = self.web_fetch.run(WebFetchInput(url=input.content))
+            if not fetched.success:
+                raise RuntimeError(f"Webfetch failed: {fetched.error}")
+            return fetched.content
+
+        return input.content
