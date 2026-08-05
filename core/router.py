@@ -12,7 +12,10 @@ class Router:
         response = self.claude.client.messages.parse(
             model=self.claude.model,
             max_tokens=self.claude.max_tokens,
-            system="Classify the user's research intent. Be concise.",
+            system=(
+                "Classify the user's research intent. Be concise. "
+                "If the user specifies a particular aspect to focus on, extract it into the focus field."
+            ),
             messages=[{"role": "user", "content": user_input}],
             output_format=RoutingDecision,
         )
