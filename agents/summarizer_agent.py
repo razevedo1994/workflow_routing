@@ -2,7 +2,8 @@ from pathlib import Path
 
 from jinja2 import Environment, FileSystemLoader
 
-from schemas.agents.summarizer_agent import ContentType, SummarizerInput, SummaryOutput
+from schemas.agents.summarizer_agent import SummarizerInput, SummaryOutput
+from schemas.router.content_type import ContentType
 from schemas.tools.web_fetch import WebFetchInput
 from services.api.claude_client import ClaudeClient
 from tools.web_fetch import WebFetchTool
