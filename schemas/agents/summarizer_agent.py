@@ -1,12 +1,5 @@
-from enum import Enum
-
 from pydantic import BaseModel, Field
-
-
-class ContentType(str, Enum):
-    URL = "url"
-    PDF = "pdf"
-    TEXT = "text"
+from router.content_type import ContentType
 
 
 class SummarizerInput(BaseModel):
